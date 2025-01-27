@@ -1,0 +1,64 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'groupChat/css/home.css' %}">
+
+<div class="container">
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <h1>Welcome{% if request.user.is_authenticated %}, {{ request.user.username }}{% endif %}</h1>
+        </div>
+        <div class="nav-right">
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'logout' %}" class="nav-link">Logout</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="nav-link">Login</a>
+                <a href="{% url 'signup' %}" class="nav-link">Sign Up</a>
+            {% endif %}
+        </div>
+    </nav>
+    
+    <!-- Chat Section -->
+    <div class="chat-container">
+        <div class="chat-box" id="chat-box">
+            {% for message in chat_messages %}
+            <div class="message {% if message.sender == request.user %}my-message{% else %}other-message{% endif %}">
+                <div class="message-header">
+                    <span class="username">{{ message.sender.username }}</span>
+                    <span class="timestamp">{{ message.created_at|timesince }} ago</span>
+                </div>
+                <div class="message-content">
+                    {% if message.image %}
+                        <img src="{{ MEDIA_URL }}{{ message.image }}" alt="Uploaded image" class="chat-image">
+                    {% endif %}
+                    {% if message.content %}{{ message.content }}{% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <div class="no-messages">No messages here yet! Be the first to send one!</div>
+            {% endfor %}
+        </div>
+        
+        {% if request.user.is_authenticated %}
+        <form method="POST" class="message-form" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="input-group">
+                <input type="text" name="content" placeholder="Type your message...">
+                <label class="file-upload">
+                    📎 <input type="file" name="image" accept="image/*">
+                </label>
+                <button type="submit">Send</button>
+            </div>
+        </form>
+        {% else %}
+        <div class="login-prompt">
+            <a href="{% url 'login' %}">Login to send messages</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+
+{% endblock %}
