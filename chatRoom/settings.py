@@ -22,12 +22,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-gdh-l10t1ol_y!4&4c5j7clp_2mr0%&n$zt0zg!lvs!^km41rt'
+# SECRET_KEY = 'django-insecure-gdh-l10t1ol_y!4&4c5j7clp_2mr0%&n$zt0zg!lvs!^km41rt'
 
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-gdh-l10t1ol_y!4&4c5j7clp_2mr0%&n$zt0zg!lvs!^km41rt')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = 'RENDER' not in os.environ
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -79,9 +80,16 @@ WSGI_APPLICATION = 'chatRoom.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default='postgresql://postgres:bugattis@localhost:5432/new_hall',
+#         conn_max_age=600
+#     )
+# }
+
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgresql://postgres:bugattis@localhost:5432/new_hall',
+        default='postgresql://localhost/chatroom',
         conn_max_age=600
     )
 }
